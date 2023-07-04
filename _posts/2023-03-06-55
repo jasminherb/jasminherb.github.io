@@ -1,0 +1,167 @@
+---
+layout: single
+title:  "통계분석(중회귀 방정식) "
+---
+
+
+#### 출처 : ChatGPT 
+
+
+주어진 선형식을 만족하는 데이터를 그래프로 그려주는 코드
+
+ x1, x2는 표준 정규분포를 따르는 랜덤한 값으로 생성되고, disturbance는 표준 정규분포를 따르는 랜덤한 값으로 생성됩니다. 
+ 
+ 그리고 선형식에 x1, x2, disturbance를 대입하여 y 값을 계산합니다.
+
+ ```python
+
+ import numpy as np
+
+# 데이터 개수
+n = 200
+
+# 랜덤 시드 설정 (재현성을 위해 설정)
+np.random.seed(42)
+
+# x1, x2 데이터 생성
+x1 = np.random.randn(n)
+x2 = np.random.randn(n)
+
+# 오차(disturbance) 생성
+disturbance = np.random.randn(n)
+
+# y 데이터 생성
+y = 5.6 * x1 + 2.17 * x2 + 1.98 + disturbance
+
+# 결과 출력
+for i in range(n):
+    print(f"x1={x1[i]:.2f}, x2={x2[i]:.2f}, y={y[i]:.2f}")
+```
+
+데이터셋을 CSV 파일로 저장하기 위해 pandas 라이브러리를 사용할 수 있습니다. 
+
+아래의 코드를 사용하여 데이터셋을 CSV 파일로 저장할 수 있습니다.
+
+x1=0.50, x2=0.36, y=3.94
+x1=-0.14, x2=0.56, y=1.82
+x1=0.65, x2=1.08, y=7.96
+x1=1.52, x2=1.05, y=12.84
+x1=-0.23, x2=-1.38, y=-2.77
+x1=-0.23, x2=-0.94, y=-0.74
+x1=1.58, x2=0.52, y=10.87
+x1=0.77, x2=0.51, y=7.25
+x1=-0.47, x2=0.52, y=0.59
+x1=0.54, x2=3.85, y=13.89
+.
+.
+.
+x1=-0.46, x2=0.57, y=1.34
+x1=-0.47, x2=1.14, y=0.71
+x1=0.24, x2=0.95, y=3.87
+x1=-1.91, x2=0.65, y=-6.04
+x1=-1.72, x2=-0.32, y=-8.03
+x1=-0.56, x2=0.76, y=-0.27
+x1=-1.01, x2=-0.77, y=-3.82
+x1=0.31, x2=-0.24, y=3.34
+x1=-0.91, x2=-0.49, y=-2.98
+x1=-1.41, x2=0.08, y=-5.68
+x1=1.47, x2=2.31, y=17.27
+x1=-0.23, x2=-1.87, y=-1.58
+x1=0.07, x2=0.69, y=3.60
+x1=-1.42, x2=-1.61, y=-8.53
+
+
+
+
+```python
+
+import pandas as pd
+
+# 데이터셋 생성
+data = {'x1': x1, 'x2': x2, 'y': y}
+df = pd.DataFrame(data)
+
+# CSV 파일로 저장
+df.to_csv('dataset.csv', index=False)
+
+```
+
+현재 디렉토리에 dataset.csv라는 이름의 CSV 파일이 생성됩니다. 
+
+이 CSV 파일은 데이터셋의 x1, x2, y 값을 포함하게 됩니다. index=False 옵션을 사용하여 인덱스 열을 포함하지 않도록 설정하였습니다.
+
+
+
+주어진 CSV 파일(dataset.csv)을 불러와서 회귀분석을 실시하고 결과를 그래프로 그려주는 코드는 다음과 같습니다.
+
+
+
+```python
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
+
+# CSV 파일 읽기
+df = pd.read_csv('dataset.csv')
+
+# 데이터셋 준비
+x1 = df['x1'].values.reshape(-1, 1)
+x2 = df['x2'].values.reshape(-1, 1)
+y = df['y'].values
+
+# 회귀분석 모델 학습
+regressor = LinearRegression()
+regressor.fit(np.concatenate((x1, x2), axis=1), y)
+
+# 회귀분석 결과
+coef = regressor.coef_
+intercept = regressor.intercept_
+
+# 예측값 계산
+y_pred = regressor.predict(np.concatenate((x1, x2), axis=1))
+
+# 그래프 그리기
+fig = plt.figure(figsize=(8, 6))
+ax = fig.add_subplot(111, projection='3d')
+
+ax.scatter(x1, x2, y, c='b', marker='o', label='Actual')
+ax.scatter(x1, x2, y_pred, c='r', marker='s', label='Predicted')
+
+ax.set_xlabel('x1')
+ax.set_ylabel('x2')
+ax.set_zlabel('y')
+ax.set_title('Actual vs. Predicted Values')
+
+ax.legend()
+plt.show()
+
+# R-squared 값 계산
+r2 = r2_score(y, y_pred)
+print('R-squared:', r2)
+
+```
+그래프는 실제값과 예측값을 비교하여 나타냅니다. 
+
+R-squared 값을 계산하여 모델의 적합도를 평가합니다.
+
+
+실행 결과로는 그래프가 나타나며, R-squared 값이 출력됩니다. R-squared 값은 0과 1 사이의 값을 가지며, 
+
+1에 가까울수록 모델의 예측력이 좋다는 의미입니다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
